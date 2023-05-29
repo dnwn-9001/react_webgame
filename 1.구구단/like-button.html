@@ -41,12 +41,16 @@
             // return 안에는 형제태그 안되고 div로 감싸서 태그가 하나만 와야함
             // babel이 jsx 문법을 보면 React.createElement로 바꿔줌.(javascript에서 태그문법은 사용할 수 없기때문에). 그래서 babel을 사용해야함.
             // jsx를 사용할때 태그는 무조건 소문자로.(html과 다르게 xml이 더 엄격함. 그래서 xml 사용.
-            // javascript 코드는 중괄호로 감싸주기.
+            // 객체를 직접 변경하지 말고 복사해라.(불변성)
             <div>
-              <button onClick={() => this.setState({ liked: true })}>
-                {this.state.liked ? "Liked" : "Like!"}
+              <button
+                onClick={() =>
+                  //this.state.liked = true 대신에 setState를 이용
+                  this.setState({ liked: true })
+                }
+              >
+                Like
               </button>
-              <input type="text" />
             </div>
           );
         }
@@ -63,9 +67,6 @@
       // React 18버전 코드
       ReactDOM.createRoot(document.querySelector("#root")).render(
         <div>
-          <LikeButton />
-          <LikeButton />
-          <LikeButton />
           <LikeButton />
         </div>
       );
