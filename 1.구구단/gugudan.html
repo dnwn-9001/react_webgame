@@ -17,60 +17,53 @@
   <body>
     <div id="root"></div>
     <script type="text/babel">
-      class GuGuDan extends React.Component {
-        state = {
-          first: Math.ceil(Math.random() * 9),
-          second: Math.ceil(Math.random() * 9),
-          value: "",
-          result: "",
+      const GuGuDan = () => {
+        const [first, setFirst] = React.useState(Math.ceil(Math.random() * 9));
+        const [second, setSecond] = React.useState(
+          Math.ceil(Math.random() * 9)
+        );
+        const [value, setValue] = React.useState("");
+        const [result, setResult] = React.useState("");
+        const inputRef = React.useRef(null);
+
+        const onChageInput = (e) => {
+          setValue(e.target.value);
         };
 
-        // 함수는 무조건 화살표 함수로. function을 사용하면 this가 가르키는게 달라짐.
-        onSubmit = (e) => {
+        const onSubmit = (e) => {
           e.preventDefault();
-          if (
-            parseInt(this.state.value) ===
-            this.state.first * this.state.second
-          ) {
-            this.setState((prevState) => {
-              return {
-                result: "정답:" + prevState.value,
-                first: Math.ceil(Math.random() * 9),
-                second: Math.ceil(Math.random() * 9),
-                value: "",
-              };
-            });
+          if (parseInt(value) === first * second) {
+            console.log("정답");
+            setResult("정답!" + value);
+            setFirst(Math.ceil(Math.random() * 9));
+            setSecond(Math.ceil(Math.random() * 9));
+            setValue("");
+            inputRef.current.focus();
           } else {
-            this.setState({
-              result: "땡!",
-              value: "",
-            });
+            console.log("틀림");
+            setResult("땡!");
+            setValue("");
+            inputRef.current.focus();
           }
         };
-
-        onChange = (e) => {
-          this.setState({ value: e.target.value });
-        };
-
-        render() {
-          return (
-            <>
-              <div>
-                {this.state.first} 곱하기 {this.state.second} 는?
-              </div>
-              <form onSubmit={this.onSubmit}>
-                <input
-                  type="number"
-                  value={this.state.value}
-                  onChange={this.onChange}
-                />
-                <button type="submit">입력!</button>
-              </form>
-              <div>{this.state.result}</div>
-            </>
-          );
-        }
-      }
+        return (
+          <React.Fragment>
+            <div>
+              {first} 곱하기 {second}는?
+            </div>
+            <form onSubmit={onSubmit}>
+              <input
+                type="number"
+                ref={inputRef}
+                value={value}
+                onChange={onChageInput}
+              />
+              <button type="submit">입력!</button>
+            </form>
+            <div>{result}</div>
+          </React.Fragment>
+        );
+      };
     </script>
     <script type="text/babel">
       ReactDOM.createRoot(document.querySelector("#root")).render(
