@@ -13,7 +13,6 @@ module.exports = {
   entry: {
     app: ["./client"],
   },
-  // 공식문서에서 Loaders가 module
   module: {
     rules: [
       {
