@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Try from "./Try";
 
 function getNumbers() {
@@ -17,6 +17,7 @@ const NumberBaseball = () => {
   const [value, setValue] = useState("");
   const [answer, setAnswer] = useState(getNumbers); // lazy init
   const [tries, setTries] = useState([]);
+  const inputEl = useRef(null);
 
   const onSubmitForm = (e) => {
     e.preventDefault();
@@ -29,6 +30,7 @@ const NumberBaseball = () => {
       setValue("");
       setAnswer(getNumbers());
       setTries([]);
+      inputEl.current.focus();
     } else {
       const answerArray = value.split("").map((v) => parseInt(v));
       let strike = 0;
@@ -39,6 +41,7 @@ const NumberBaseball = () => {
         setValue("");
         setAnswer(getNumbers());
         setTries([]);
+        inputEl.current.focus();
       } else {
         for (let i = 0; i < 4; i++) {
           if (answerArray[i] === answer[i]) {
@@ -54,6 +57,7 @@ const NumberBaseball = () => {
           ];
         });
         setValue("");
+        inputEl.current.focus();
       }
     }
   };
@@ -67,7 +71,12 @@ const NumberBaseball = () => {
     <>
       <h1>{result}</h1>
       <form onSubmit={onSubmitForm}>
-        <input type="number" value={value} onChange={onChangeInput} />
+        <input
+          ref={inputEl}
+          type="number"
+          value={value}
+          onChange={onChangeInput}
+        />
         <button type="submit">입력</button>
       </form>
       <div>시도 : {tries.length}</div>
