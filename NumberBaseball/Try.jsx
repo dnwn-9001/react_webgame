@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 
 // class Try extends Component {
 //   render() {
@@ -13,7 +13,7 @@ import React, { Component } from "react";
 //   }
 // }
 
-const Try = ({ tryInfo }) => {
+const Try = memo(({ tryInfo }) => {
   return (
     <>
       <li>
@@ -22,6 +22,8 @@ const Try = ({ tryInfo }) => {
       </li>
     </>
   );
-};
+});
+
+Try.displayName = "Try";
 
 export default Try;

@@ -106,4 +106,4 @@ class NumberBaseball extends Component {
   }
 }
 
-// export default NumberBaseball;
+export default NumberBaseball;
