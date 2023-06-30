@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
+import useInterval from "./useInterval";
 
 const rspCoords = {
   바위: 0,
@@ -22,14 +23,7 @@ const RspHooks = () => {
   const [result, setResult] = useState("");
   const [imgCoord, setImgCoord] = useState(rspCoords.바위);
   const [score, setScore] = useState(0);
-  const intervalRef = useRef(0);
-
-  useEffect(() => {
-    intervalRef.current = setInterval(changeHand, 1000);
-    return () => {
-      clearInterval(intervalRef.current);
-    };
-  }, [imgCoord]);
+  const [isRunning, setIsRunning] = useState(true);
 
   const changeHand = () => {
     if (imgCoord === rspCoords.바위) {
@@ -41,24 +35,29 @@ const RspHooks = () => {
     }
   };
 
-  const onClickBtn = (choice) => () => {
-    clearInterval(intervalRef.current);
-    const myScore = scores[choice];
-    const computerScore = scores[computerChoice(imgCoord)];
-    const diff = myScore - computerScore;
-    if (diff === 0) {
-      setResult("비겼습니다!");
-    } else if ([-1, 2].includes(diff)) {
-      setResult("이겼습니다!");
-      setScore((prevScore) => prevScore + 1);
-    } else {
-      setResult("졌습니다!");
-      setScore((prevScore) => prevScore - 1);
-    }
+  useInterval(changeHand, isRunning ? 1000 : null);
 
-    setTimeout(() => {
-      intervalRef.current = setInterval(changeHand, 1000);
-    }, 2000);
+  const onClickBtn = (choice) => () => {
+    if (isRunning) {
+      // 멈췄을 때 또 클릭하는 것 방지
+      setIsRunning(false);
+      const myScore = scores[choice];
+      const computerScore = scores[computerChoice(imgCoord)];
+      const diff = myScore - computerScore;
+      if (diff === 0) {
+        setResult("비겼습니다!");
+      } else if ([-1, 2].includes(diff)) {
+        setResult("이겼습니다!");
+        setScore((prevScore) => prevScore + 1);
+      } else {
+        setResult("졌습니다!");
+        setScore((prevScore) => prevScore - 1);
+      }
+
+      setTimeout(() => {
+        setIsRunning(true);
+      }, 2000);
+    }
   };
 
   return (
