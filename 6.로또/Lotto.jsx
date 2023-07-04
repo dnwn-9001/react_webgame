@@ -12,7 +12,6 @@ function getWinNumbers() {
   //       : "";
   //   }
   //   return arr;
-  console.log("getWinNumbers");
   const candidate = Array(45)
     .fill()
     .map((v, i) => i + 1);
@@ -35,19 +34,53 @@ class Lotto extends Component {
     redo: false,
   };
 
-  cnt = 0;
+  timeouts = [];
 
-  showBalls() {
-    this.setState({
-      // return {
-      //   winBalls: [...prevState.winBalls, this.state.winNumbers[this.cnt]],
-      // };
-      redo: true,
-    });
-    this.cnt++;
+  runTimeouts = () => {
+    const { winNumbers } = this.state;
+    for (let i = 0; i < winNumbers.length - 1; i++) {
+      this.timeouts[i] = setTimeout(() => {
+        this.setState((prevState) => {
+          return {
+            winBalls: [...prevState.winBalls, winNumbers[i]],
+          };
+        });
+      }, (i + 1) * 1000);
+    }
+
+    this.timeouts[winNumbers.length - 1] = setTimeout(() => {
+      this.setState({
+        bonus: winNumbers[winNumbers.length - 1],
+        redo: true,
+      });
+    }, 7000);
+  };
+
+  componentDidMount() {
+    this.runTimeouts();
   }
 
-  onClickRedo() {}
+  componentDidUpdate() {
+    if (this.state.winBalls.length === 0) {
+      this.runTimeouts();
+    }
+  }
+
+  componentWillUnmount() {
+    this.timeouts.forEach((v) => {
+      clearTimeout(v);
+    });
+  }
+
+  onClickRedo = () => {
+    this.setState({
+      winNumbers: getWinNumbers(),
+      winBalls: [],
+      bonus: null,
+      redo: false,
+    });
+    this.timeouts = [];
+  };
 
   render() {
     const { winBalls, bonus, redo } = this.state;
@@ -61,7 +94,9 @@ class Lotto extends Component {
         </div>
         <div>보너스!</div>
         {bonus && <Ball number={bonus} />}
-        <button onClick={redo ? onClickRedo : () => {}}>한 번 더!</button>
+        <div>
+          {redo && <button onClick={this.onClickRedo}>한 번 더!</button>}
+        </div>
       </>
     );
   }
